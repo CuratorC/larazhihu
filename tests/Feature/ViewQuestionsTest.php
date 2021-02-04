@@ -3,21 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\Question;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ViewQuestionsTest extends TestCase
 {
-    // 数据库自动回滚
-    use RefreshDatabase;
     /**
      * @test
      */
     public function user_can_view_questions()
     {
-        // 0. 抛出异常
-        $this->withoutExceptionHandling();
-
         // 1. 访问链接 questions
         $test = $this->get('/questions');
 

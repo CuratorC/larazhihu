@@ -19,3 +19,5 @@ Route::get('/', function () {
 
 Route::get('/questions', [\App\Http\Controllers\QuestionsController::class, 'index']);
 Route::get('/questions/{question}', [\App\Http\Controllers\QuestionsController::class, 'show']);
+
+Route::post('/questions/{question}/answers', [\App\Http\Controllers\AnswersController::class, 'store']);
