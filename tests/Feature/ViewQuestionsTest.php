@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Question;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ViewQuestionsTest extends TestCase
 {
+    // 数据库自动回滚
+    use RefreshDatabase;
     /**
      * @test
      */
@@ -20,5 +23,20 @@ class ViewQuestionsTest extends TestCase
 
         // 2. 正常返回 200
         $test->assertStatus(200);
+    }
+
+    /** @test */
+    public function user_can_view_a_single_question()
+    {
+        // 1. 创建一个问题
+        $question = Question::factory()->create();
+
+        // 2. 访问链接
+        $test = $this->get('/questions/' . $question->id);
+
+        // 3. 那么应该看到问题的内容
+        $test->assertStatus(200)
+            ->assertSee($question->title)
+            ->assertSee($question->content);
     }
 }
