@@ -27,6 +27,6 @@ class AnswersController extends Controller
             'content'   => \request('content'),
         ]);
 
-        return response()->json([], 201);
+        return back();
     }
 }

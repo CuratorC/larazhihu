@@ -28,14 +28,30 @@ class PostAnswersTest extends TestCase
             'content'   => 'This is an answer.'
         ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(302);
 
         // 我们要看到预期结果
         $answer = $question->answers()->where('user_id', $user->id)->first();
         $this->assertNotNull($answer);
 
         $this->assertEquals(1, $question->answers()->count());
+    }
 
+    /**
+     * @test
+     * @description 未登录用户不能提交回答
+     * @author CuratorC
+     * @date 2021/2/5
+     */
+    public function guests_may_not_post_an_answer()
+    {
+        $this->expectException('Illuminate\Auth\AuthenticationException');
+
+        $question = Question::factory()->published()->create();
+
+        $response = $this->post("/questions/{$question->id}/answers", [
+            'content'   => 'This is an answer.'
+        ]);
     }
 
     /**
@@ -47,7 +63,7 @@ class PostAnswersTest extends TestCase
     public function can_not_post_an_answer_to_an_unpublished_question()
     {
         $question = Question::factory()->unpublished()->create();
-        $user = User::factory()->create();
+        $this->actingAs($user = User::factory()->create());
 
         $response = $this->withExceptionHandling()
             ->post("/questions/{$question->id}/answers", [
@@ -71,7 +87,7 @@ class PostAnswersTest extends TestCase
         $this->withExceptionHandling();
 
         $question = Question::factory()->published()->create();
-        $user = User::factory()->create();
+        $this->actingAs($user = User::factory()->create());
 
         $response = $this->post("/questions/{$question->id}/answers", [
             'user_id'   => $user->id,
