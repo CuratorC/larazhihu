@@ -11,11 +11,16 @@ use Tests\TestCase;
 class PostAnswersTest extends TestCase
 {
 
-    /** @test */
-    public function user_can_post_an_answer_to_a_question()
+    /**
+     * @test
+     * @description 用户可以回答一个已发布的问题
+     * @author CuratorC
+     * @date 2021/2/5
+     */
+    public function user_can_post_an_answer_to_a_published_question()
     {
         // 假设已经存在某个问题
-        $question = Question::factory()->create();
+        $question = Question::factory()->published()->create();
         $user = User::factory()->create();
 
         // 然后我们触发某个路由
@@ -32,5 +37,27 @@ class PostAnswersTest extends TestCase
 
         $this->assertEquals(1, $question->answers()->count());
 
+    }
+
+    /**
+     * @test
+     * @description 不能给未发布的问题发表回答
+     * @author CuratorC
+     * @date 2021/2/5
+     */
+    public function can_not_post_an_answer_to_an_unpublished_question()
+    {
+        $question = Question::factory()->unpublished()->create();
+        $user = User::factory()->create();
+
+        $response = $this->withExceptionHandling()
+            ->post("/questions/{$question->id}/answers", [
+                'user_id'   => $user->id,
+                'content'   => 'This is an answer.'
+            ]);
+        $response->assertStatus(404);
+
+        $this->assertDatabaseMissing('answers', ['question_id'  => $question->id]);
+        $this->assertEquals(0, $question->answers()->count());
     }
 }
