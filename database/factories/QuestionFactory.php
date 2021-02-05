@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Question;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class QuestionFactory extends Factory
@@ -20,7 +21,7 @@ class QuestionFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'user_id'   => function() {
@@ -29,5 +30,26 @@ class QuestionFactory extends Factory
             'title' => $this->faker->sentence,
             'content'   => $this->faker->sentence,
         ];
+    }
+
+    /**
+     * 发布
+     * @return QuestionFactory
+     */
+    public function published(): QuestionFactory
+    {
+        return $this->state([
+            'published_at'  => Carbon::parse('-1 week')
+        ]);
+    }
+    /**
+     * 发布
+     * @return QuestionFactory
+     */
+    public function unpublished(): QuestionFactory
+    {
+        return $this->state([
+            'published_at'  => null
+        ]);
     }
 }
