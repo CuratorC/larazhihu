@@ -13,19 +13,18 @@ class PostAnswersTest extends TestCase
 
     /**
      * @test
-     * @description 用户可以回答一个已发布的问题
+     * @description 已登录用户可以回答一个已发布的问题
      * @author CuratorC
      * @date 2021/2/5
      */
-    public function user_can_post_an_answer_to_a_published_question()
+    public function signed_in_user_can_post_an_answer_to_a_published_question()
     {
         // 假设已经存在某个问题
         $question = Question::factory()->published()->create();
-        $user = User::factory()->create();
+        $this->actingAs($user = User::factory()->create());
 
         // 然后我们触发某个路由
         $response = $this->post("/questions/{$question->id}/answers", [
-            'user_id'   => $user->id,
             'content'   => 'This is an answer.'
         ]);
 
@@ -59,5 +58,27 @@ class PostAnswersTest extends TestCase
 
         $this->assertDatabaseMissing('answers', ['question_id'  => $question->id]);
         $this->assertEquals(0, $question->answers()->count());
+    }
+
+    /**
+     * @test
+     * @description content 是必填项
+     * @author CuratorC
+     * @date 2021/2/5
+     */
+    public function content_is_required_to_post_answers()
+    {
+        $this->withExceptionHandling();
+
+        $question = Question::factory()->published()->create();
+        $user = User::factory()->create();
+
+        $response = $this->post("/questions/{$question->id}/answers", [
+            'user_id'   => $user->id,
+            'content'   => null
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasErrors('content');
     }
 }
