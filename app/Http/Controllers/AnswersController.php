@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,7 @@ class AnswersController extends Controller
     }
 
     //
-    public function store($questionId)
+    public function store($questionId): \Illuminate\Http\RedirectResponse
     {
         $question = Question::published()->findOrFail($questionId);
 
@@ -26,6 +27,15 @@ class AnswersController extends Controller
             'user_id'   => auth()->id(),
             'content'   => \request('content'),
         ]);
+
+        return back();
+    }
+
+    public function destroy(Answer $answer)
+    {
+        $this->authorize('delete', $answer);
+
+        $answer->delete();
 
         return back();
     }

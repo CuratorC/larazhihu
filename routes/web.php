@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\AnswersController;
+use App\Http\Controllers\BestAnswersController;
+use App\Http\Controllers\QuestionsController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +19,12 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 // 获取问题列表
-Route::get('/questions', [\App\Http\Controllers\QuestionsController::class, 'index']);
+Route::get('/questions', [QuestionsController::class, 'index']);
 // 获取问题详情
-Route::get('/questions/{question}', [\App\Http\Controllers\QuestionsController::class, 'show']);
+Route::get('/questions/{question}', [QuestionsController::class, 'show']);
 // 给问题回答答案
-Route::post('/questions/{question}/answers', [\App\Http\Controllers\AnswersController::class, 'store']);
+Route::post('/questions/{question}/answers', [AnswersController::class, 'store']);
 // 设置最佳答案
-Route::post('answers/{answer}/best', [\App\Http\Controllers\BestAnswersController::class, 'store'])->name('best-answers.store');
+Route::post('answers/{answer}/best', [BestAnswersController::class, 'store'])->name('best-answers.store');
+// 删除回答
+Route::delete('/answers/{answer}', [AnswersController::class, 'destroy'])->name('answers.destroy');
