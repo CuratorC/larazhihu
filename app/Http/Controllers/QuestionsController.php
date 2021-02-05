@@ -13,8 +13,9 @@ class QuestionsController extends Controller
 
     }
 
-    public function show(Question $question): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Contracts\Foundation\Application
+    public function show($questionId)
     {
+        $question = Question::whereNotNull('published_at')->findOrFail($questionId);
         return view('questions.show', compact('question'));
     }
 }
