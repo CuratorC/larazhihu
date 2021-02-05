@@ -14,11 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 Auth::routes();
 
+// 获取问题列表
 Route::get('/questions', [\App\Http\Controllers\QuestionsController::class, 'index']);
+// 获取问题详情
 Route::get('/questions/{question}', [\App\Http\Controllers\QuestionsController::class, 'show']);
-
+// 给问题回答答案
 Route::post('/questions/{question}/answers', [\App\Http\Controllers\AnswersController::class, 'store']);
-
-//Auth::routes();
-//
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// 设置最佳答案
+Route::post('answers/{answer}/best', [\App\Http\Controllers\BestAnswersController::class, 'store'])->name('best-answers.store');

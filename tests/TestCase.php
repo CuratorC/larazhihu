@@ -18,7 +18,14 @@ abstract class TestCase extends BaseTestCase
         $this->withoutExceptionHandling();
     }
 
-    protected function signIn($user = null)
+    /**
+     * @description 用户登入
+     * @param null $user
+     * @return $this
+     * @author CuratorC
+     * @date 2021/2/5
+     */
+    protected function signIn($user = null): TestCase
     {
         $user = $user ?: create(User::class);
 
