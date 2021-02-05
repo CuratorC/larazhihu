@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Questions;
 
+use App\Models\Answer;
 use App\Models\Question;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -39,5 +40,25 @@ class ViewQuestionsTest extends TestCase
         $this->withExceptionHandling()
             ->get('/questions/' . $question->id)
             ->assertStatus(404);
+    }
+
+    /**
+     * @test
+     * @description 可以查看已发布问题的回答列表
+     * @author CuratorC
+     * @date 2021/2/5
+     */
+    public function can_see_answers_when_view_a_published_question()
+    {
+        $question = simpleCreate(Question::class, 'published');
+        create(Answer::class, ['question_id'=>$question->id], 40);
+
+        $response = $this->get('/questions/' . $question->id);
+
+        $result = $response->data('answers')->toArray();
+
+        $this->assertCount(20, $result['data']);
+        $this->assertEquals(40, $result['total']);
+
     }
 }
