@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Question;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PostAnswersTest extends TestCase
@@ -20,8 +18,7 @@ class PostAnswersTest extends TestCase
     public function signed_in_user_can_post_an_answer_to_a_published_question()
     {
         // 假设已经存在某个问题
-        // $question = create(Question::class);
-        $question = Question::factory()->published()->create();
+        $question = simpleCreate(Question::class, 'published');
         $this->signIn($user = create(User::class));
 
         // 然后我们触发某个路由
@@ -48,9 +45,9 @@ class PostAnswersTest extends TestCase
     {
         $this->expectException('Illuminate\Auth\AuthenticationException');
 
-        $question = Question::factory()->published()->create();
+        $question = simpleCreate(Question::class, 'published');
 
-        $response = $this->post("/questions/{$question->id}/answers", [
+        $this->post("/questions/{$question->id}/answers", [
             'content'   => 'This is an answer.'
         ]);
     }
@@ -63,7 +60,7 @@ class PostAnswersTest extends TestCase
      */
     public function can_not_post_an_answer_to_an_unpublished_question()
     {
-        $question = Question::factory()->unpublished()->create();
+        $question = simpleCreate(Question::class,  'unpublished');
         $this->signIn($user = create(User::class));
 
         $response = $this->withExceptionHandling()
@@ -87,7 +84,7 @@ class PostAnswersTest extends TestCase
     {
         $this->withExceptionHandling();
 
-        $question = Question::factory()->published()->create();
+        $question = simpleCreate(Question::class,  'published');
         $this->signIn($user = create(User::class));
 
         $response = $this->post("/questions/{$question->id}/answers", [
